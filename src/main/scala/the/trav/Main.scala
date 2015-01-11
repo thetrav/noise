@@ -20,9 +20,9 @@ object Main extends SimpleSwingApplication {
 
   def perlin = {
     (graphics: Graphics2D) => {
-      val p1 = new Perlin(207)
-      val p2 = new Perlin(200)
-      val p3 = new Perlin(50)
+      val p1 = new Perlin(Grid(207))
+      val p2 = new Perlin(Grid(200))
+      val p3 = new Perlin(Grid(50))
 
       def r(c:Coord, max: Double) = {
         def p(perlin: Perlin) = perlin.value(c, max)
