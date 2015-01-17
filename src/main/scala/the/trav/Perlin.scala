@@ -27,7 +27,7 @@ case class Perlin(grid: Grid, startSeed: Int = Random.nextInt()) {
     Vector[Number](r,r).normalize
   }
 
-  def value(coord: Vector[Number], max: Number = 1): Number = {
+  def value(coord: Vector[Number]): Number = {
     assume(coord.length == 2)
     val x = coord.head
     val y = coord.tail.head
@@ -56,14 +56,14 @@ case class Perlin(grid: Grid, startSeed: Int = Random.nextInt()) {
     val i2 = g2 ⋅ d2
     val i3 = g3 ⋅ d3
     val i4 = g4 ⋅ d4
-    val sx = ease(x0/x1, x/x1)
+    val sx = ease(x0/grid.size, x/grid.size)
 
     val a = interpolate(i1, i2, sx)
     val b = interpolate(i3, i4, sx)
 
-    val sy = ease(y0/y1, y/y1)
+    val sy = ease(y0/grid.size, y/grid.size)
     val z = interpolate(a, b, sy)
 
-    abs(z) * max
+    abs(z)
   }
 }

@@ -1,98 +1,59 @@
 package the.trav
 
-import scala.swing._
-import java.awt.Color
-import scala.util.Random
-import scala.swing.event.ButtonClicked
+import javax.swing._
+import java.awt.{Graphics, BorderLayout, Color}
 import spire.implicits._
-import spire.math._
+import java.awt.image.BufferedImage
 
 
-object Main extends SimpleSwingApplication {
+object Main extends App {
 
   val width = 800
   val height = 600
 
-  type PaintFn = Graphics2D => Unit
-  type Gen = Vector[Number] => Double
+  val frame = new JFrame("travs app")
+  frame.setSize(width, height)
 
-//  val panels: Seq[PaintFn] = Seq(random, notRandom, perlin)
-//  val panels: Seq[PaintFn] = Seq(notRandom)
-  val panels: Seq[PaintFn] = Seq(perlin)
+  val panel = new JPanel()
+  panel.setLayout(new BorderLayout())
 
-  def perlin = {
-    (graphics: Graphics2D) => {
-      val p1 = new Perlin(Grid(207))
-      val p2 = new Perlin(Grid(200))
-      val p3 = new Perlin(Grid(50))
+  val controls = new JPanel()
+  panel.add(controls, BorderLayout.SOUTH)
 
-      def r(c:Vector[Number], maxVal: Number): Double = {
-        def p(perlin: Perlin) = perlin.value(c, maxVal)
-        val rnd = p(p1)/2 + p(p2)/2 * p(p3)
-        max(min(rnd, maxVal), 0:Number).toDouble
-      }
-      def b = r _
-      def g = r _
+  val canvas = new JPanel()
+  canvas.setSize(width-100, height-200)
+//  panel.add(canvas, BorderLayout.CENTER)
 
-      paintNoise(graphics, c => r(c, 255), c => g(c, 255), c => b(c, 255))
-      graphics.setColor(Color.green)
-      graphics.drawString(s"seeds: ${p1.startSeed}, ${p2.startSeed}, ${p3.startSeed}", 350, 350)
-    }
-  }
-
-  val rGen = new Random()
-  def random = (g: Graphics2D) => {
-    var n = 0.0
-    val r = (c:Vector[Number]) => {
-      n = rGen.nextInt(255).toDouble
-      n
-    }
-    paintNoise(g, r, _ => n ,_ => n)
-  }
-
-  val nGen = new NotRandom()
-  def notRandom = (g:Graphics2D) => {
-    val r = (c:Vector[Number]) => nGen.value(c, 255)
-    paintNoise(g, r, r, r)
-  }
-
-  def paintNoise(graphics: Graphics2D, r: Gen, g: Gen, b: Gen ) = {
-    (0 to width/panels.size).foreach { x =>
-      (0 to 50+height/2).foreach { y =>
-        val c = Vector[Number](x,y)
-
-        graphics.setColor(new Color(r(c).toInt, g(c).toInt, b(c).toInt))
-        graphics.drawRect(x,y,1,1)
+  def noisePanel(w:Int, h:Int, perlin: Perlin): JPanel = {
+    val image = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB)
+    val graphics = image.getGraphics
+    (0 to w).foreach { x =>
+      (0 to h).foreach { y =>
+        val v = (perlin.value(Vector(x,y)) * 200).toInt
+        graphics.setColor(new Color(v, v, v))
+        graphics.fillRect(x, y, 1, 1)
+//        def dot(n:Int, c:Color) {
+//          if(x % n == 0 && y % n == 0) {
+//            graphics.setColor(c)
+//            graphics.fillRect(x,y,1,1)
+//          }
+//        }
+//        dot(10, Color.red)
+//        dot(50, Color.yellow)
+    }}
+    new JPanel() {
+      override def paintComponent(g:Graphics) {
+        g.setColor(new Color(255,255,255))
+        g.fillRect(0,0,this.getWidth, this.getHeight)
+        g.drawImage(image, 0, 0, this)
       }
     }
   }
 
-  def drawPanel(paintFunction: Graphics2D => Unit) = {
-    lazy val canvas = new Panel {
-      override def paintComponent(g: Graphics2D) = {
-        super.paintComponent(g)
-        paintFunction(g)
-      }
-    }
 
-    lazy val redraw = new Button {
-      text = "redraw"
-      reactions += {
-        case ButtonClicked(_) => canvas.repaint()
-      }
-    }
 
-    new GridPanel(2, 1) {
-      contents.append(canvas, redraw)
-    }
-  }
+  frame.getContentPane.add(noisePanel(width,height, Perlin(Grid(50))))
 
-  override def top: Frame = new MainFrame {
-    title = "Hello, World!"
-    contents = new GridPanel(1,panels.size) {
-      contents.append(panels.map(drawPanel) :_*)
-      border = Swing.EmptyBorder(10, 10, 10, 10)
-    }
-    size = new Dimension(1000, 800)
-  }
+  frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+  frame.setVisible(true)
 }

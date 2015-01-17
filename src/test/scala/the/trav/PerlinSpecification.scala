@@ -50,12 +50,14 @@ object PerlinSpecification extends Properties("Perlin") {
   }
 
   property("linear interpolation in straight forward case") = forAll {
-    (amount: Double) =>
+    (a: Double) =>
+      val amount = a/Double.MaxValue
       Perlin.interpolate(0, 1, amount) == (amount: Number)
   }
 
   property("linear interpolation on negative scaled axis") = forAll {
-    (amount: Double) =>
+    (a: Double) =>
+      val amount = a/Double.MaxValue
       Perlin.interpolate(0, -100, amount) == (amount: Number) * -100
   }
 
