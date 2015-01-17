@@ -37,31 +37,20 @@ case class Perlin(grid: Grid, startSeed: Int = Random.nextInt()) {
     val x1 = x0 + grid.size
     val y1 = y0 + grid.size
 
-    val p1 = Vector(x0, y0)
-    val p2 = Vector(x1, y0)
-    val p3 = Vector(x0, y1)
-    val p4 = Vector(x1, y1)
+    def difference(p:Vector[Number]) = (coord - p) :/ grid.size
+    def influence(p:Vector[Number]) = gradient(p) ⋅ difference(p)
 
-    val g1 = gradient(p1)
-    val g2 = gradient(p2)
-    val g3 = gradient(p3)
-    val g4 = gradient(p4)
+    val i1 = influence(Vector(x0, y0))
+    val i2 = influence(Vector(x1, y0))
+    val i3 = influence(Vector(x0, y1))
+    val i4 = influence(Vector(x1, y1))
 
-    val d1 = (coord - p1) :/ grid.size
-    val d2 = (coord - p2) :/ grid.size
-    val d3 = (coord - p3) :/ grid.size
-    val d4 = (coord - p4) :/ grid.size
-
-    val i1 = g1 ⋅ d1
-    val i2 = g2 ⋅ d2
-    val i3 = g3 ⋅ d3
-    val i4 = g4 ⋅ d4
-    val sx = ease(x0/grid.size, x/grid.size)
+    val sx = ease(x0 / grid.size, x / grid.size)
 
     val a = interpolate(i1, i2, sx)
     val b = interpolate(i3, i4, sx)
 
-    val sy = ease(y0/grid.size, y/grid.size)
+    val sy = ease(y0 / grid.size, y / grid.size)
     val z = interpolate(a, b, sy)
 
     abs(z)
