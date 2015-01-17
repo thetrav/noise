@@ -32,7 +32,7 @@ object Main extends App {
     }
   }
 
-  frame.getContentPane.add(noisePanel(width,height, Perlin(Grid(50))))
+  frame.getContentPane.add(noisePanel(width,height, Perlin(Grid(100))))
 
   frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
   frame.setVisible(true)
