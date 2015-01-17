@@ -12,7 +12,10 @@ object PerlinSpecification extends Properties("Perlin") {
   val one: Number = 1
 
   implicit lazy val arbGrid = GridSpecification.arbGrid
-  implicit lazy val arbVector = NotRandomSpecification.arbVector
+  implicit lazy val arbVector = Arbitrary( for {
+    a <- Gen.chooseNum(1, Integer.MAX_VALUE)
+    b <- Gen.chooseNum(1, Integer.MAX_VALUE)
+  } yield Vector[Number](a, b))
   implicit lazy val arbPerlin = Arbitrary( for {
     grid <- Arbitrary.arbitrary[Grid]
     seed <- Gen.chooseNum(1, Integer.MAX_VALUE)
