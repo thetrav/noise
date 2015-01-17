@@ -15,14 +15,14 @@ object Perlin {
     (to - from) * amount + from
 }
 
-case class Perlin(grid: Grid, startSeed: Int = Random.nextInt()) {
+case class Perlin(grid: Grid, startSeed: Int = 133788135) {
   import Perlin._
 
   def gradient(c:Vector[Number]): Vector[Number] = {
     //TODO: figure out a better way to do pseudo random gradient generation
     val seed: Int = c.foldLeft(0: Number) { (accum:Number, number: Number) => accum * 10 + number}.toInt
     val rGen = new Random(seed | startSeed)
-    def r = (rGen.nextInt()*2)-1
+    def r = rGen.nextInt()
     Vector[Number](r,r).normalize
   }
 
