@@ -4,6 +4,8 @@ import scala.swing._
 import java.awt.Color
 import scala.util.Random
 import scala.swing.event.ButtonClicked
+import spire.implicits._
+import spire.math._
 
 
 object Main extends SimpleSwingApplication {
@@ -12,7 +14,7 @@ object Main extends SimpleSwingApplication {
   val height = 600
 
   type PaintFn = Graphics2D => Unit
-  type Gen = Coord => Double
+  type Gen = Vector[Number] => Double
 
 //  val panels: Seq[PaintFn] = Seq(random, notRandom, perlin)
 //  val panels: Seq[PaintFn] = Seq(notRandom)
@@ -24,26 +26,13 @@ object Main extends SimpleSwingApplication {
       val p2 = new Perlin(Grid(200))
       val p3 = new Perlin(Grid(50))
 
-      def r(c:Coord, max: Double) = {
-        def p(perlin: Perlin) = perlin.value(c, max)
-//        p(p1)
-//        val rnd = p(p1) + p(p2)
-
-//        val rnd = (p(p1) + p(p2)) - p(p3)
+      def r(c:Vector[Number], maxVal: Number): Double = {
+        def p(perlin: Perlin) = perlin.value(c, maxVal)
         val rnd = p(p1)/2 + p(p2)/2 * p(p3)
-//        val rnd = p(p1)/2 + p(p2)/1.5 - p(p3)/3
-//        val rnd = Math.pow(p(p3)/10, p(p1)/10)
-        val z = Math.max(Math.min(rnd, max), 0)
-        z
-//        z match {
-//          case 300 => max
-//          case 250 => 0.0
-//          case x => x
-//        }
+        max(min(rnd, maxVal), 0:Number).toDouble
       }
       def b = r _
       def g = r _
-
 
       paintNoise(graphics, c => r(c, 255), c => g(c, 255), c => b(c, 255))
       graphics.setColor(Color.green)
@@ -54,7 +43,7 @@ object Main extends SimpleSwingApplication {
   val rGen = new Random()
   def random = (g: Graphics2D) => {
     var n = 0.0
-    val r = (c:Coord) => {
+    val r = (c:Vector[Number]) => {
       n = rGen.nextInt(255).toDouble
       n
     }
@@ -63,14 +52,14 @@ object Main extends SimpleSwingApplication {
 
   val nGen = new NotRandom()
   def notRandom = (g:Graphics2D) => {
-    val r = (c:Coord) => nGen.value(c, 255)
-    paintNoise(g, r,r,r)
+    val r = (c:Vector[Number]) => nGen.value(c, 255)
+    paintNoise(g, r, r, r)
   }
 
   def paintNoise(graphics: Graphics2D, r: Gen, g: Gen, b: Gen ) = {
     (0 to width/panels.size).foreach { x =>
       (0 to 50+height/2).foreach { y =>
-        val c = Coord(x,y)
+        val c = Vector[Number](x,y)
 
         graphics.setColor(new Color(r(c).toInt, g(c).toInt, b(c).toInt))
         graphics.drawRect(x,y,1,1)

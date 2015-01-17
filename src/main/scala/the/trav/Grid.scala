@@ -1,17 +1,12 @@
 package the.trav
+import spire.implicits._
+import spire.math._
 
-case class Grid(size: Int) {
+case class Grid(size: Number) {
   assume(size > 0)
-  val max = Int.MaxValue / size * size
-  val min = -max
 
-  def withinAddressableSpace(scalar:Int): Boolean = {
-    scalar >= min && scalar <= max
-  }
-
-  def snapLeft(scalar: Int): Int = {
-    assume(withinAddressableSpace(scalar))
-    val shift = if(scalar < 0) (Math.ceil(scalar.toDouble / -size) * size).toInt else 0
+  def snapLeft(scalar: Number): Number = {
+    val shift: Number = if(scalar < 0) floor(ceil(scalar / -size) * size) else 0
     val s = scalar + shift
     s - s % size - shift
   }
