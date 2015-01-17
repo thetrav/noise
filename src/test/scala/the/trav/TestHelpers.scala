@@ -1,6 +1,5 @@
 package the.trav
 
-import spire.implicits._
 import spire.math._
 
 object TestHelpers {

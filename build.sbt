@@ -1,6 +1,4 @@
-scalaVersion := "2.10.4"
-
-libraryDependencies <+= scalaVersion { "org.scala-lang" % "scala-swing" % _ }
+scalaVersion := "2.11.4"
 
 libraryDependencies ++= Seq(
   "org.spire-math" %% "spire" % "0.9.0",

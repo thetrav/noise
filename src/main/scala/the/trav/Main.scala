@@ -1,7 +1,7 @@
 package the.trav
 
 import javax.swing._
-import java.awt.{Graphics, BorderLayout, Color}
+import java.awt.{Graphics, Color}
 import spire.implicits._
 import java.awt.image.BufferedImage
 
