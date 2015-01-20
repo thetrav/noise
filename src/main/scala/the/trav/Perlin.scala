@@ -23,10 +23,11 @@ case class Perlin(grid: Grid, startSeed: Int = 133788135) {
   var gradients = Map[Vector[Number], Vector[Number]]()
 
   def gradient(c:Vector[Number]): Vector[Number] = {
-    if(!gradients.contains(c)) {
-      gradients = gradients + (c -> Vector[Number](random.nextInt(), random.nextInt()).normalize)
+    gradients.get(c).getOrElse {
+      val gradient = Vector[Number](random.nextInt(), random.nextInt()).normalize
+      gradients = gradients + (c -> gradient)
+      gradient
     }
-    gradients(c)
   }
 
   def value(coord: Vector[Number]): Number = {
