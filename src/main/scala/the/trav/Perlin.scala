@@ -18,12 +18,15 @@ object Perlin {
 case class Perlin(grid: Grid, startSeed: Int = 133788135) {
   import Perlin._
 
+  //note that the random reference is not mutated, however it refers to a stateful machine
+  var random = new Random(startSeed)
+  var gradients = Map[Vector[Number], Vector[Number]]()
+
   def gradient(c:Vector[Number]): Vector[Number] = {
-    //TODO: figure out a better way to do pseudo random gradient generation
-    val seed: Int = c.foldLeft(0: Number) { (accum:Number, number: Number) => accum * 10 + number}.toInt
-    val rGen = new Random(seed | startSeed)
-    def r = rGen.nextInt()
-    Vector[Number](r,r).normalize
+    if(!gradients.contains(c)) {
+      gradients = gradients + (c -> Vector[Number](random.nextInt(), random.nextInt()).normalize)
+    }
+    gradients(c)
   }
 
   def value(coord: Vector[Number]): Number = {
